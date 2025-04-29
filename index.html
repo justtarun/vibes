@@ -92,6 +92,7 @@
       font-weight: bold;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -99,7 +100,7 @@
     <h1>Cosmic <em>Vibes</em></h1>
     <div class="vibe-output"></div>
     <div id="form-container">
-      <label class="form-label">Vibe:</label>
+      <label class="form-label"><em>Vibe</em>:</label>
       <input type="text" id="custom-vibe" placeholder="Enter your vibe">
 
       <label class="form-label">Song:</label>
@@ -109,6 +110,7 @@
 
   <div id="controls">
     <button class="vibe-button" onclick="generateVibe()">Random <em>Vibe</em></button>
+    <button class="vibe-button" onclick="saveVibe()">Save This <em>Vibe</em></button>
     <button class="vibe-button" onclick="showForm()">Create A <em>Vibe</em></button>
   </div>
 
@@ -144,7 +146,7 @@
       }
 
       const vibeHTML = `
-        <p><strong>🌌 Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
+        <p><strong>🌌 <em>Vibe</em>:</strong> ${randomFrom(vibeData.vibes)}</p>
         <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
         <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
         <p><strong>🭿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
@@ -162,6 +164,22 @@
       fadeAndFill(() => {
         vibeOutput.innerHTML = currentHTML;
         formContainer.style.display = "flex";
+      });
+    }
+
+    function saveVibe() {
+      const wasVisible = formContainer.style.display !== "none";
+      formContainer.style.display = "none";
+
+      html2canvas(outputBox).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'cosmic-vibe.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        if (wasVisible) {
+          formContainer.style.display = "flex";
+        }
       });
     }
 
