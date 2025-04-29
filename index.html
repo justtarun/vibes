@@ -5,7 +5,7 @@
   <title>Cosmic Vibe Overloader</title>
   <style>
     body {
-      background-color: black;
+      background-color: #000;
       color: #0ff;
       font-family: 'Courier New', monospace;
       text-align: center;
@@ -20,17 +20,23 @@
       border: 2px solid #0ff;
       border-radius: 10px;
       max-width: 600px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: opacity 0.3s ease;
     }
 
     #newVibeButton {
       margin-top: 20px;
       padding: 12px 24px;
       background-color: #0ff;
-      color: black;
+      color: #000;
       border: none;
       border-radius: 8px;
       font-size: 1.2em;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
     #newVibeButton:hover {
@@ -40,66 +46,66 @@
 </head>
 <body>
 
-  <div id="output"></div>
-
-  <button id="newVibeButton" onclick="generateVibe()">New Vibe</button>
+  <main>
+    <section id="output"></section>
+    <button id="newVibeButton">New Vibe</button>
+  </main>
 
   <script>
-    const vibes = [
-      "you are the last banana on a space station",
-      "gravity is just shy today",
-      "you woke up made of crystal",
-      "time is folding itself into origami swans"
-    ];
+    const vibeData = {
+      vibes: [],
+      palettes: [],
+      songs: [],
+      objects: [],
+      affirmations: []
+    };
 
-    const palettes = [
-      "goblin green and ethereal mauve",
-      "sun-bleached cyan and bruised gold",
-      "void black and shimmer pink"
-    ];
-
-    const songs = [
-      "Dreaming of Satellites - The Mistones",
-      "Hollow Anthems - Neon Drift",
-      "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  // Fun easter egg!
-    ];
-
-    const objects = [
-      "cracked monocle of insight",
-      "rusty key to nowhere",
-      "eternal hourglass leaking stardust"
-    ];
-
-    const affirmations = [
-      "even voidfish need naps",
-      "your echoes write symphonies",
-      "the stars already forgave you"
-    ];
+    const output = document.getElementById('output');
+    const button = document.getElementById('newVibeButton');
 
     function randomFrom(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
     function generateVibe() {
-      const vibeHTML = `
-        <div class="vibe-output">
-          <p><strong>🌌 Daily Vibe:</strong> ${randomFrom(vibes)}</p>
-          <p><strong>🎨 Color Palette:</strong> ${randomFrom(palettes)}</p>
-          <p><strong>🎵 Song:</strong> ${randomFrom(songs)}</p>
-          <p><strong>🧿 Mysterious Object:</strong> ${randomFrom(objects)}</p>
-          <p><strong>✨ Affirmation:</strong> ${randomFrom(affirmations)}</p>
-        </div>
-      `;
-      
-      // Clear previous vibe
-      document.getElementById("output").innerHTML = "";
+      if (Object.values(vibeData).some(arr => arr.length === 0)) {
+        output.innerHTML = "<p>🔄 Loading data... please wait!</p>";
+        return;
+      }
 
-      // Insert new vibe
-      document.getElementById("output").innerHTML = vibeHTML;
+      output.style.opacity = '0';
+      setTimeout(() => {
+        output.innerHTML = `
+          <div class="vibe-output">
+            <p><strong>🌌 Daily Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
+            <p><strong>🎨 Color Palette:</strong> ${randomFrom(vibeData.palettes)}</p>
+            <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
+            <p><strong>🧿 Mysterious Object:</strong> ${randomFrom(vibeData.objects)}</p>
+            <p><strong>✨ Affirmation:</strong> ${randomFrom(vibeData.affirmations)}</p>
+          </div>
+        `;
+        output.style.opacity = '1';
+      }, 200);
     }
 
-    // Create the first vibe immediately when page loads
-    generateVibe();
+    // Load each data file separately
+    Promise.all([
+      fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
+      fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
+      fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
+      fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
+      fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
+    ])
+    .then(() => {
+      console.log("✅ All data loaded!");
+      generateVibe();
+    })
+    .catch(error => {
+      console.error('⚠️ Error loading one of the files:', error);
+      output.innerHTML = "<p style='color: red;'>⚠️ Failed to load vibe data. Try refreshing!</p>";
+    });
+
+    button.addEventListener('click', generateVibe);
   </script>
 
 </body>
