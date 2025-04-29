@@ -20,20 +20,19 @@
       border: 2px solid #0ff;
       border-radius: 10px;
       max-width: 600px;
-      min-height: 480px; /* Slightly smaller box */
+      min-height: 520px; /* Fixed height */
       display: flex;
       flex-direction: column;
-      justify-content: flex-start; /* Aligns from top */
-      gap: 30px; /* Increased space between entries */
+      justify-content: center;
+      gap: 20px; /* space between entries */
       box-sizing: border-box;
     }
 
     #output p {
       margin: 0;
       font-size: 1.4em;
-      line-height: 1.6em; /* Increased line height for more space */
+      line-height: 1.4em;
       word-wrap: break-word;
-      padding-bottom: 12px; /* More space between entries */
     }
 
     #newVibeButton {
@@ -93,4 +92,18 @@
 
   // Load each data file separately
   Promise.all([
-    fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes =
+    fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
+    fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
+    fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
+    fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
+    fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
+  ])
+  .then(() => {
+    console.log("All data loaded!");
+    generateVibe(); // create first vibe after everything is loaded
+  })
+  .catch(error => console.error('Error loading one of the files:', error));
+  </script>
+
+</body>
+</html>
