@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Cosmic Vibe Overloader</title>
   <style>
+    /* Existing CSS styles */
     body {
       background-color: black;
       color: #0ff;
@@ -91,12 +92,9 @@
     .form-label {
       font-weight: bold;
     }
-
-    /* Italics only for "Vibe" text */
-    .italicize {
-      font-style: italic;
-    }
   </style>
+  <!-- Include html2canvas library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -113,9 +111,9 @@
   </div>
 
   <div id="controls">
-    <button class="vibe-button" onclick="generateVibe()"><span>Random </span><span class="italicize">Vibe</span></button>
-    <button class="vibe-button" onclick="saveVibe()"><span>Save This </span><span class="italicize">Vibe</span></button>
-    <button class="vibe-button" onclick="showForm()"><span>Create </span><span class="italicize">Vibe</span></button>
+    <button class="vibe-button" onclick="generateVibe()">Random Vibe</button>
+    <button class="vibe-button" onclick="saveVibe()">Save This Vibe</button>
+    <button class="vibe-button" onclick="showForm()">Create Vibe</button>
   </div>
 
   <script>
@@ -172,7 +170,16 @@
     }
 
     function saveVibe() {
-      alert("Save Vibe feature coming soon!"); // Placeholder for now
+      html2canvas(outputBox).then(function(canvas) {
+        // Convert canvas to data URL (image)
+        const image = canvas.toDataURL("image/png");
+
+        // Create a link to download the image
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'cosmic-vibe.png';
+        link.click();
+      });
     }
 
     // Load each data file separately
