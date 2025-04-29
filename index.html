@@ -38,3 +38,38 @@
       projectId: "vibes-a72a8",
       storageBucket: "vibes-a72a8.firebasestorage.app",
       messagingSenderId: "427577332493",
+      appId: "1:427577332493:web:a383f8b4e228afa20d9644",
+      measurementId: "G-JXL378W0ED"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    // Submission handler
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const category = document.getElementById("category").value;
+      const entry = document.getElementById("entry").value.trim();
+
+      if (!entry) {
+        document.getElementById("status").textContent = "Please enter something before submitting!";
+        return;
+      }
+
+      push(ref(db, "suggestions"), {
+        category: category,
+        value: entry,
+        timestamp: Date.now()
+      })
+      .then(() => {
+        document.getElementById("status").textContent = "✅ Thanks for your vibe!";
+        document.getElementById("entry").value = "";
+      })
+      .catch((error) => {
+        document.getElementById("status").textContent = "❌ Error sending vibe: " + error.message;
+      });
+    });
+  </script>
+</body>
+</html>
