@@ -23,16 +23,17 @@
       min-height: 520px; /* Fixed height */
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 20px; /* space between entries */
+      justify-content: flex-start; /* Aligns from top */
+      gap: 20px; /* Decreased space between entries */
       box-sizing: border-box;
     }
 
     #output p {
       margin: 0;
       font-size: 1.4em;
-      line-height: 1.4em;
+      line-height: 1.4em; /* Adjusted line height */
       word-wrap: break-word;
+      padding-bottom: 12px; /* More space between entries */
     }
 
     #newVibeButton {
