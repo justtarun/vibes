@@ -1,202 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Cosmic Vibe Overloader</title>
-  <style>
-    body {
-      background-color: black;
-      color: #0ff;
-      font-family: 'Courier New', monospace;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .fade-in {
-      animation: fadeIn 0.8s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    #output {
-      margin: 30px auto;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 2px solid #0ff;
-      border-radius: 10px;
-      max-width: 600px;
-      min-height: 520px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      gap: 20px;
-      box-sizing: border-box;
-      opacity: 0;
-    }
-
-    #output p {
-      margin: 0;
-      font-size: 1.4em;
-      line-height: 1.4em;
-      word-wrap: break-word;
-      padding-bottom: 12px;
-    }
-
-    #controls {
-      margin-top: 20px;
-    }
-
-    .vibe-button {
-      margin: 0 10px;
-      padding: 12px 24px;
-      background-color: #0ff;
-      color: black;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.2em;
-      cursor: pointer;
-    }
-
-    .vibe-button:hover {
-      background-color: #0cc;
-    }
-
-    #output h1 {
-      font-size: 1.8em;
-      font-weight: bold;
-      text-decoration: underline;
-      text-shadow: 2px 2px 4px rgba(0, 255, 255, 0.7);
-      margin-bottom: 20px;
-    }
-
-    #form-container {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    input[type="text"] {
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 5px;
-      border: 1px solid #0ff;
-      background: black;
-      color: #0ff;
-    }
-
-    .form-label {
-      font-weight: bold;
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Your Vibe</title>
 </head>
-<body>
+<body style="background: #111; color: #fff; font-family: sans-serif; padding: 2em; text-align: center;">
+  <h1>🌌 Submit Your Vibe</h1>
 
-  <div id="output" class="fade-in">
-    <h1>Cosmic <em>Vibes</em></h1>
-    <div class="vibe-output"></div>
-    <div id="form-container">
-      <label class="form-label"><em>Vibe</em>:</label>
-      <input type="text" id="custom-vibe" placeholder="Enter your vibe">
+  <label for="category">Pick a Category:</label>
+  <select id="category">
+    <option value="vibes">Vibe</option>
+    <option value="palettes">Colors</option>
+    <option value="songs">Song</option>
+    <option value="objects">Thing</option>
+    <option value="affirmations">Note</option>
+  </select>
 
-      <label class="form-label">Song:</label>
-      <input type="text" id="custom-song" placeholder="Enter your song">
-    </div>
-  </div>
+  <br><br>
 
-  <div id="controls">
-    <button class="vibe-button" onclick="generateVibe()">Random <em>Vibe</em></button>
-    <button class="vibe-button" onclick="saveVibe()">Save This <em>Vibe</em></button>
-    <button class="vibe-button" onclick="showForm()">Create A <em>Vibe</em></button>
-  </div>
+  <input type="text" id="entry" placeholder="Your vibe idea..." style="width: 300px; padding: 0.5em;" />
+  <br><br>
+  <button id="submitBtn" style="padding: 0.75em 1.5em;">✨ Send It</button>
 
-  <script>
-    const vibeData = {
-      vibes: [],
-      palettes: [],
-      songs: [],
-      objects: [],
-      affirmations: []
-    };
+  <p id="status" style="margin-top: 1em;"></p>
 
-    let currentHTML = "";
-    const outputBox = document.getElementById("output");
-    const vibeOutput = document.querySelector(".vibe-output");
-    const formContainer = document.getElementById("form-container");
+  <script type="module">
+    // Import Firebase functions
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-    function randomFrom(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function fadeAndFill(callback) {
-      outputBox.classList.remove("fade-in");
-      void outputBox.offsetWidth; // trigger reflow
-      callback();
-      outputBox.classList.add("fade-in");
-    }
-
-    function generateVibe() {
-      if (Object.values(vibeData).some(arr => arr.length === 0)) {
-        console.error("Data not fully loaded yet!");
-        return;
-      }
-
-      const vibeHTML = `
-        <p><strong>🌌 <em>Vibe</em>:</strong> ${randomFrom(vibeData.vibes)}</p>
-        <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
-        <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
-        <p><strong>🭿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
-        <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
-      `;
-
-      currentHTML = vibeHTML;
-      fadeAndFill(() => {
-        vibeOutput.innerHTML = vibeHTML;
-        formContainer.style.display = "none";
-      });
-    }
-
-    function showForm() {
-      fadeAndFill(() => {
-        vibeOutput.innerHTML = currentHTML;
-        formContainer.style.display = "flex";
-      });
-    }
-
-    function saveVibe() {
-      const wasVisible = formContainer.style.display !== "none";
-      formContainer.style.display = "none";
-
-      html2canvas(outputBox).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'cosmic-vibe.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-
-        if (wasVisible) {
-          formContainer.style.display = "flex";
-        }
-      });
-    }
-
-    // Load each data file separately
-    Promise.all([
-      fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
-      fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
-      fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
-      fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
-      fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
-    ])
-    .then(() => {
-      console.log("All data loaded!");
-      generateVibe();
-    })
-    .catch(error => console.error('Error loading one of the files:', error));
-  </script>
-
-</body>
-</html>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBco-Y7JxRfhnLjVbV26EIe-wmBMsnCv3Q",
+      authDomain: "vibes-a72a8.firebaseapp.com",
+      projectId: "vibes-a72a8",
+      storageBucket: "vibes-a72a8.firebasestorage.app",
+      messagingSenderId: "427577332493",
