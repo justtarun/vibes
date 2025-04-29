@@ -59,10 +59,6 @@
       border-radius: 8px;
       font-size: 1.2em;
       cursor: pointer;
-      display: inline-block;
-      text-align: center;
-      white-space: normal; /* Allow text to break onto multiple lines */
-      line-height: 1.4em;
     }
 
     .vibe-button:hover {
@@ -97,7 +93,7 @@
     }
 
     /* Italics only for "Vibe" text */
-    .vibe-button .italicize {
+    .italicize {
       font-style: italic;
     }
   </style>
@@ -117,9 +113,9 @@
   </div>
 
   <div id="controls">
-    <button class="vibe-button" onclick="generateVibe()"><span>Random</span><br><span class="italicize">Vibe</span></button>
-    <button class="vibe-button" onclick="saveVibe()"><span>Save This</span><br><span class="italicize">Vibe</span></button>
-    <button class="vibe-button" onclick="showForm()"><span>Create</span><br><span class="italicize">Vibe</span></button>
+    <button class="vibe-button" onclick="generateVibe()"><span>Random </span><span class="italicize">Vibe</span></button>
+    <button class="vibe-button" onclick="saveVibe()"><span>Save This </span><span class="italicize">Vibe</span></button>
+    <button class="vibe-button" onclick="showForm()"><span>Create </span><span class="italicize">Vibe</span></button>
   </div>
 
   <script>
