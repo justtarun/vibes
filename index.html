@@ -59,6 +59,9 @@
       border-radius: 8px;
       font-size: 1.2em;
       cursor: pointer;
+      display: inline-block;
+      text-align: center;
+      white-space: pre-line; /* Allows text to break into multiple lines */
     }
 
     .vibe-button:hover {
@@ -91,6 +94,11 @@
     .form-label {
       font-weight: bold;
     }
+
+    /* Italics on Vibe text */
+    .vibe-button span {
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -108,9 +116,9 @@
   </div>
 
   <div id="controls">
-    <button class="vibe-button" onclick="generateVibe()">Random Vibe</button>
-    <button class="vibe-button" onclick="saveVibe()">Save This Vibe</button>
-    <button class="vibe-button" onclick="showForm()">Create A Vibe</button>
+    <button class="vibe-button" onclick="generateVibe()"><span>Random</span> Vibe</button>
+    <button class="vibe-button" onclick="saveVibe()"><span>Save This</span> Vibe</button>
+    <button class="vibe-button" onclick="showForm()"><span>Create</span> Vibe</button>
   </div>
 
   <script>
@@ -148,7 +156,7 @@
         <p><strong>🌌 Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
         <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
         <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
-        <p><strong>🭿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
+        <p><strong>🧿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
         <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
       `;
 
@@ -167,7 +175,7 @@
     }
 
     function saveVibe() {
-      alert("Save This Vibe feature coming soon!"); // Placeholder for now
+      alert("Save Vibe feature coming soon!"); // Placeholder for now
     }
 
     // Load each data file separately
