@@ -5,111 +5,104 @@
   <title>Cosmic Vibe Overloader</title>
   <style>
     body {
-      background-color: #000;
+      background-color: black;
       color: #0ff;
       font-family: 'Courier New', monospace;
       text-align: center;
       margin: 0;
-      padding: 30px;
-      font-size: 20px; /* Bigger text! */
+      padding: 20px;
     }
 
     #output {
-      margin: 40px auto;
-      padding: 30px;
-      background: rgba(0, 0, 0, 0.6);
+      margin: 30px auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
       border: 2px solid #0ff;
-      border-radius: 12px;
-      max-width: 700px;
-      min-height: 250px;
+      border-radius: 10px;
+      max-width: 600px;
+      min-height: 520px; /* Fixed height */
       display: flex;
       flex-direction: column;
       justify-content: center;
-      transition: opacity 0.3s ease;
-      font-size: 22px; /* Bigger vibe text */
-      line-height: 1.6;
+      gap: 20px; /* space between entries */
+      box-sizing: border-box;
+    }
+
+    #output p {
+      margin: 0;
+      font-size: 1.4em;
+      line-height: 1.4em;
+      word-wrap: break-word;
     }
 
     #newVibeButton {
-      margin-top: 30px;
-      padding: 16px 32px;
+      margin-top: 20px;
+      padding: 12px 24px;
       background-color: #0ff;
-      color: #000;
+      color: black;
       border: none;
-      border-radius: 10px;
-      font-size: 1.5em; /* Bigger button */
+      border-radius: 8px;
+      font-size: 1.2em;
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     #newVibeButton:hover {
       background-color: #0cc;
-      transform: scale(1.05); /* Slight button pop effect */
     }
   </style>
 </head>
 <body>
 
-  <main>
-    <section id="output"></section>
-    <button id="newVibeButton">New Vibe</button>
-  </main>
+  <div id="output"></div>
+
+  <button id="newVibeButton" onclick="generateVibe()">New Vibe</button>
 
   <script>
-    const vibeData = {
-      vibes: [],
-      palettes: [],
-      songs: [],
-      objects: [],
-      affirmations: []
-    };
+  const vibeData = {
+    vibes: [],
+    palettes: [],
+    songs: [],
+    objects: [],
+    affirmations: []
+  };
 
-    const output = document.getElementById('output');
-    const button = document.getElementById('newVibeButton');
+  function randomFrom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
 
-    function randomFrom(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
+  function generateVibe() {
+    if (Object.values(vibeData).some(arr => arr.length === 0)) {
+      console.error("Data not fully loaded yet!");
+      return;
     }
 
-    function generateVibe() {
-      if (Object.values(vibeData).some(arr => arr.length === 0)) {
-        output.innerHTML = "<p>🔄 Loading data... please wait!</p>";
-        return;
-      }
+    const vibeHTML = `
+      <div class="vibe-output">
+        <p><strong>🌌 Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
+        <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
+        <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
+        <p><strong>🧿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
+        <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
+      </div>
+    `;
 
-      output.style.opacity = '0';
-      setTimeout(() => {
-        output.innerHTML = `
-          <div class="vibe-output">
-            <p><strong>🌌 Daily Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
-            <p><strong>🎨 Color Palette:</strong> ${randomFrom(vibeData.palettes)}</p>
-            <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
-            <p><strong>🧿 Mysterious Object:</strong> ${randomFrom(vibeData.objects)}</p>
-            <p><strong>✨ Affirmation:</strong> ${randomFrom(vibeData.affirmations)}</p>
-          </div>
-        `;
-        output.style.opacity = '1';
-      }, 200);
-    }
+    document.getElementById("output").innerHTML = "";
+    document.getElementById("output").innerHTML = vibeHTML;
+  }
 
-    // Load each data file separately
-    Promise.all([
-      fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
-      fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
-      fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
-      fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
-      fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
-    ])
-    .then(() => {
-      console.log("✅ All data loaded!");
-      generateVibe();
-    })
-    .catch(error => {
-      console.error('⚠️ Error loading one of the files:', error);
-      output.innerHTML = "<p style='color: red;'>⚠️ Failed to load vibe data. Try refreshing!</p>";
-    });
-
-    button.addEventListener('click', generateVibe);
+  // Load each data file separately
+  Promise.all([
+    fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
+    fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
+    fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
+    fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
+    fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
+  ])
+  .then(() => {
+    console.log("All data loaded!");
+    generateVibe(); // create first vibe after everything is loaded
+  })
+  .catch(error => console.error('Error loading one of the files:', error));
   </script>
 
 </body>
