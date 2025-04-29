@@ -13,6 +13,15 @@
       padding: 20px;
     }
 
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     #output {
       margin: 30px auto;
       padding: 20px;
@@ -26,17 +35,10 @@
       justify-content: flex-start;
       gap: 20px;
       box-sizing: border-box;
+      opacity: 0;
     }
 
-    #output h1 {
-      font-size: 1.8em;
-      font-weight: bold;
-      text-decoration: underline;
-      text-shadow: 2px 2px 4px rgba(0, 255, 255, 0.7);
-      margin-bottom: 10px;
-    }
-
-    .vibe-output p {
+    #output p {
       margin: 0;
       font-size: 1.4em;
       line-height: 1.4em;
@@ -44,8 +46,12 @@
       padding-bottom: 12px;
     }
 
-    #newVibeButton {
+    #controls {
       margin-top: 20px;
+    }
+
+    .vibe-button {
+      margin: 0 10px;
       padding: 12px 24px;
       background-color: #0ff;
       color: black;
@@ -55,19 +61,57 @@
       cursor: pointer;
     }
 
-    #newVibeButton:hover {
+    .vibe-button:hover {
       background-color: #0cc;
+    }
+
+    #output h1 {
+      font-size: 1.8em;
+      font-weight: bold;
+      text-decoration: underline;
+      text-shadow: 2px 2px 4px rgba(0, 255, 255, 0.7);
+      margin-bottom: 20px;
+    }
+
+    #form-container {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #0ff;
+      background: black;
+      color: #0ff;
+    }
+
+    .form-label {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div id="output">
+  <div id="output" class="fade-in">
     <h1>Cosmic Vibes</h1>
     <div class="vibe-output"></div>
+    <div id="form-container">
+      <label class="form-label">Vibe:</label>
+      <input type="text" id="custom-vibe" placeholder="Enter your vibe">
+
+      <label class="form-label">Song:</label>
+      <input type="text" id="custom-song" placeholder="Enter your song">
+    </div>
   </div>
 
-  <button id="newVibeButton" onclick="generateVibe()">New Vibe</button>
+  <div id="controls">
+    <button class="vibe-button" onclick="generateVibe()">Rando Vibe</button>
+    <button class="vibe-button" onclick="saveVibe()">Save Vibe</button>
+    <button class="vibe-button" onclick="showForm()">Create Vibe</button>
+  </div>
 
   <script>
     const vibeData = {
@@ -78,8 +122,20 @@
       affirmations: []
     };
 
+    let currentHTML = "";
+    const outputBox = document.getElementById("output");
+    const vibeOutput = document.querySelector(".vibe-output");
+    const formContainer = document.getElementById("form-container");
+
     function randomFrom(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function fadeAndFill(callback) {
+      outputBox.classList.remove("fade-in");
+      void outputBox.offsetWidth; // trigger reflow
+      callback();
+      outputBox.classList.add("fade-in");
     }
 
     function generateVibe() {
@@ -96,10 +152,25 @@
         <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
       `;
 
-      document.querySelector(".vibe-output").innerHTML = vibeHTML;
+      currentHTML = vibeHTML;
+      fadeAndFill(() => {
+        vibeOutput.innerHTML = vibeHTML;
+        formContainer.style.display = "none";
+      });
     }
 
-    // Load each data file
+    function showForm() {
+      fadeAndFill(() => {
+        vibeOutput.innerHTML = currentHTML;
+        formContainer.style.display = "flex";
+      });
+    }
+
+    function saveVibe() {
+      alert("Save Vibe feature coming soon!"); // Placeholder for now
+    }
+
+    // Load each data file separately
     Promise.all([
       fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
       fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
