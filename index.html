@@ -108,9 +108,9 @@
   </div>
 
   <div id="controls">
-    <button class="vibe-button" onclick="generateVibe()">Rando Vibe</button>
-    <button class="vibe-button" onclick="saveVibe()">Save Vibe</button>
-    <button class="vibe-button" onclick="showForm()">Create Vibe</button>
+    <button class="vibe-button" onclick="generateVibe()">Random Vibe</button>
+    <button class="vibe-button" onclick="saveVibe()">Save This Vibe</button>
+    <button class="vibe-button" onclick="showForm()">Create A Vibe</button>
   </div>
 
   <script>
@@ -148,7 +148,7 @@
         <p><strong>🌌 Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
         <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
         <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
-        <p><strong>🧿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
+        <p><strong>🭿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
         <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
       `;
 
@@ -167,7 +167,7 @@
     }
 
     function saveVibe() {
-      alert("Save Vibe feature coming soon!"); // Placeholder for now
+      alert("Save This Vibe feature coming soon!"); // Placeholder for now
     }
 
     // Load each data file separately
