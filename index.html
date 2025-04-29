@@ -1,37 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Submit Your Vibe</title>
+  <meta charset="UTF-8">
+  <title>Cosmic Vibe Overloader</title>
+  <style>
+    body {
+      background-color: black;
+      color: #0ff;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #output {
+      margin: 30px auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      max-width: 600px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 20px;
+      box-sizing: border-box;
+      opacity: 0;
+    }
+
+    #output p {
+      margin: 0;
+      font-size: 1.4em;
+      line-height: 1.4em;
+      word-wrap: break-word;
+      padding-bottom: 12px;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    .vibe-button {
+      margin: 0 10px;
+      padding: 12px 24px;
+      background-color: #0ff;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    .vibe-button:hover {
+      background-color: #0cc;
+    }
+
+    #output h1 {
+      font-size: 1.8em;
+      font-weight: bold;
+      text-decoration: underline;
+      text-shadow: 2px 2px 4px rgba(0, 255, 255, 0.7);
+      margin-bottom: 20px;
+    }
+
+    #form-container {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="text"], select {
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #0ff;
+      background: black;
+      color: #0ff;
+    }
+
+    .form-label {
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body style="background: #111; color: #fff; font-family: sans-serif; padding: 2em; text-align: center;">
-  <h1>🌌 Submit Your Vibe</h1>
+<body>
 
-  <label for="category">Pick a Category:</label>
-  <select id="category">
-    <option value="vibes">Vibe</option>
-    <option value="palettes">Colors</option>
-    <option value="songs">Song</option>
-    <option value="objects">Thing</option>
-    <option value="affirmations">Note</option>
-  </select>
+  <div id="output" class="fade-in">
+    <h1>Cosmic Vibes</h1>
+    <div class="vibe-output"></div>
+    <div id="form-container">
+      <label class="form-label">Type:</label>
+      <select id="suggestion-type">
+        <option value="vibes">Vibe</option>
+        <option value="palettes">Colors</option>
+        <option value="songs">Song</option>
+        <option value="objects">Thing</option>
+        <option value="affirmations">Note</option>
+      </select>
 
-  <br><br>
+      <label class="form-label">Your Suggestion:</label>
+      <input type="text" id="suggestion-input" placeholder="Type here...">
 
-  <input type="text" id="entry" placeholder="Your vibe idea..." style="width: 300px; padding: 0.5em;" />
-  <br><br>
-  <button id="submitBtn" style="padding: 0.75em 1.5em;">✨ Send It</button>
+      <button class="vibe-button" onclick="submitSuggestion()">Submit Suggestion</button>
+    </div>
+  </div>
 
-  <p id="status" style="margin-top: 1em;"></p>
+  <div id="controls">
+    <button class="vibe-button" onclick="generateVibe()">Random Vibe</button>
+    <button class="vibe-button" onclick="saveVibe()">Save This Vibe</button>
+    <button class="vibe-button" onclick="showForm()">Create A Vibe</button>
+  </div>
 
   <script type="module">
-    // Import Firebase functions
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
     import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-    // Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBco-Y7JxRfhnLjVbV26EIe-wmBMsnCv3Q",
       authDomain: "vibes-a72a8.firebaseapp.com",
@@ -39,37 +132,102 @@
       storageBucket: "vibes-a72a8.firebasestorage.app",
       messagingSenderId: "427577332493",
       appId: "1:427577332493:web:a383f8b4e228afa20d9644",
-      measurementId: "G-JXL378W0ED"
+      measurementId: "G-JXL378W0ED",
+      databaseURL: "https://vibes-a72a8-default-rtdb.firebaseio.com"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const db = getDatabase(app);
 
-    // Submission handler
-    document.getElementById("submitBtn").addEventListener("click", () => {
-      const category = document.getElementById("category").value;
-      const entry = document.getElementById("entry").value.trim();
+    const vibeData = {
+      vibes: [],
+      palettes: [],
+      songs: [],
+      objects: [],
+      affirmations: []
+    };
 
-      if (!entry) {
-        document.getElementById("status").textContent = "Please enter something before submitting!";
+    let currentHTML = "";
+    const outputBox = document.getElementById("output");
+    const vibeOutput = document.querySelector(".vibe-output");
+    const formContainer = document.getElementById("form-container");
+
+    function randomFrom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function fadeAndFill(callback) {
+      outputBox.classList.remove("fade-in");
+      void outputBox.offsetWidth;
+      callback();
+      outputBox.classList.add("fade-in");
+    }
+
+    function generateVibe() {
+      if (Object.values(vibeData).some(arr => arr.length === 0)) {
+        console.error("Data not fully loaded yet!");
         return;
       }
 
-      push(ref(db, "suggestions"), {
-        category: category,
-        value: entry,
-        timestamp: Date.now()
-      })
-      .then(() => {
-        document.getElementById("status").textContent = "✅ Thanks for your vibe!";
-        document.getElementById("entry").value = "";
-      })
-      .catch((error) => {
-        document.getElementById("status").textContent = "❌ Error sending vibe: " + error.message;
+      const vibeHTML = `
+        <p><strong>🌌 Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
+        <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
+        <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
+        <p><strong>🭿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
+        <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
+      `;
+
+      currentHTML = vibeHTML;
+      fadeAndFill(() => {
+        vibeOutput.innerHTML = vibeHTML;
+        formContainer.style.display = "none";
       });
-    });
+    }
+
+    function showForm() {
+      fadeAndFill(() => {
+        vibeOutput.innerHTML = currentHTML;
+        formContainer.style.display = "flex";
+      });
+    }
+
+    function saveVibe() {
+      const blob = new Blob([
+        `<html><body>${currentHTML}</body></html>`
+      ], { type: 'text/html' });
+
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'vibe.html';
+      a.click();
+    }
+
+    function submitSuggestion() {
+      const type = document.getElementById("suggestion-type").value;
+      const value = document.getElementById("suggestion-input").value.trim();
+      if (!value) return alert("Type something in first!");
+
+      const refPath = ref(db, `suggestions/${type}`);
+      push(refPath, value)
+        .then(() => alert("Thanks for your suggestion!"))
+        .catch(err => alert("Error: " + err.message));
+
+      document.getElementById("suggestion-input").value = "";
+    }
+
+    Promise.all([
+      fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
+      fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
+      fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
+      fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
+      fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
+    ])
+    .then(() => {
+      console.log("All data loaded!");
+      generateVibe();
+    })
+    .catch(error => console.error('Error loading one of the files:', error));
+
   </script>
 </body>
 </html>
