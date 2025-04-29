@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cosmic Vibe Overloader</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #39ff14; /* neon green for now */
+      font-family: 'Orbitron', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      min-height: 100vh;
+      padding-top: 50px;
+      overflow-x: hidden;
+    }
+    button {
+      background-color: #ff00ff;
+      color: black;
+      border: none;
+      padding: 20px 40px;
+      font-size: 24px;
+      cursor: pointer;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ff00ff, 0 0 40px #ff00ff;
+      transition: 0.3s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff;
+    }
+    .output {
+      margin-top: 30px;
+      width: 80%;
+      max-width: 600px;
+      text-align: center;
+      font-size: 20px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="overloadButton">Overload Me</button>
+
+  <div id="outputContainer" class="output"></div>
+
+  <script>
+    const button = document.getElementById('overloadButton');
+    const outputContainer = document.getElementById('outputContainer');
+
+    button.addEventListener('click', () => {
+      const vibe = "✨ Cosmic vibes incoming... ✨"; // placeholder
+      const newOutput = document.createElement('div');
+      newOutput.innerHTML = vibe;
+      outputContainer.appendChild(newOutput);
+    });
+  </script>
+
+</body>
+</html>
