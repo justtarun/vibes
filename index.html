@@ -61,7 +61,7 @@
       cursor: pointer;
       display: inline-block;
       text-align: center;
-      white-space: pre-wrap; /* Allow text to break onto multiple lines */
+      white-space: normal; /* Allow text to break onto multiple lines */
       line-height: 1.4em;
     }
 
@@ -96,8 +96,8 @@
       font-weight: bold;
     }
 
-    /* Italics on Vibe text */
-    .vibe-button span {
+    /* Italics only for "Vibe" text */
+    .vibe-button .italicize {
       font-style: italic;
     }
   </style>
@@ -117,9 +117,9 @@
   </div>
 
   <div id="controls">
-    <button class="vibe-button" onclick="generateVibe()"><span>Random</span> Vibe</button>
-    <button class="vibe-button" onclick="saveVibe()"><span>Save This</span> Vibe</button>
-    <button class="vibe-button" onclick="showForm()"><span>Create</span> Vibe</button>
+    <button class="vibe-button" onclick="generateVibe()"><span>Random</span><br><span class="italicize">Vibe</span></button>
+    <button class="vibe-button" onclick="saveVibe()"><span>Save This</span><br><span class="italicize">Vibe</span></button>
+    <button class="vibe-button" onclick="showForm()"><span>Create</span><br><span class="italicize">Vibe</span></button>
   </div>
 
   <script>
