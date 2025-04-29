@@ -20,20 +20,28 @@
       border: 2px solid #0ff;
       border-radius: 10px;
       max-width: 600px;
-      min-height: 520px; /* Fixed height */
+      min-height: 520px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start; /* Aligns from top */
-      gap: 20px; /* Decreased space between entries */
+      justify-content: flex-start;
+      gap: 20px;
       box-sizing: border-box;
     }
 
-    #output p {
+    #output h1 {
+      font-size: 1.8em;
+      font-weight: bold;
+      text-decoration: underline;
+      text-shadow: 2px 2px 4px rgba(0, 255, 255, 0.7);
+      margin-bottom: 10px;
+    }
+
+    .vibe-output p {
       margin: 0;
       font-size: 1.4em;
-      line-height: 1.4em; /* Adjusted line height */
+      line-height: 1.4em;
       word-wrap: break-word;
-      padding-bottom: 12px; /* More space between entries */
+      padding-bottom: 12px;
     }
 
     #newVibeButton {
@@ -54,57 +62,56 @@
 </head>
 <body>
 
-  <div id="output"></div>
+  <div id="output">
+    <h1>Cosmic Vibes</h1>
+    <div class="vibe-output"></div>
+  </div>
 
   <button id="newVibeButton" onclick="generateVibe()">New Vibe</button>
 
   <script>
-  const vibeData = {
-    vibes: [],
-    palettes: [],
-    songs: [],
-    objects: [],
-    affirmations: []
-  };
+    const vibeData = {
+      vibes: [],
+      palettes: [],
+      songs: [],
+      objects: [],
+      affirmations: []
+    };
 
-  function randomFrom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
-  function generateVibe() {
-    if (Object.values(vibeData).some(arr => arr.length === 0)) {
-      console.error("Data not fully loaded yet!");
-      return;
+    function randomFrom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    const vibeHTML = `
-      <div class="vibe-output">
-        <p></p> <!-- Blank line to fix top space -->
+    function generateVibe() {
+      if (Object.values(vibeData).some(arr => arr.length === 0)) {
+        console.error("Data not fully loaded yet!");
+        return;
+      }
+
+      const vibeHTML = `
         <p><strong>🌌 Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
         <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
         <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
         <p><strong>🧿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
         <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
-      </div>
-    `;
+      `;
 
-    document.getElementById("output").innerHTML = "";
-    document.getElementById("output").innerHTML = vibeHTML;
-  }
+      document.querySelector(".vibe-output").innerHTML = vibeHTML;
+    }
 
-  // Load each data file separately
-  Promise.all([
-    fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
-    fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
-    fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
-    fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
-    fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
-  ])
-  .then(() => {
-    console.log("All data loaded!");
-    generateVibe(); // create first vibe after everything is loaded
-  })
-  .catch(error => console.error('Error loading one of the files:', error));
+    // Load each data file
+    Promise.all([
+      fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
+      fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
+      fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
+      fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
+      fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
+    ])
+    .then(() => {
+      console.log("All data loaded!");
+      generateVibe();
+    })
+    .catch(error => console.error('Error loading one of the files:', error));
   </script>
 
 </body>
