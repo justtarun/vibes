@@ -91,18 +91,12 @@
     .form-label {
       font-weight: bold;
     }
-
-    .vibe-italics {
-      font-style: italic;
-    }
   </style>
-  <!-- Include html2canvas library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
   <div id="output" class="fade-in">
-    <h1>Cosmic Vibes</h1>
+    <h1>Cosmic <em>Vibes</em></h1>
     <div class="vibe-output"></div>
     <div id="form-container">
       <label class="form-label">Vibe:</label>
@@ -114,18 +108,17 @@
   </div>
 
   <div id="controls">
-    <button class="vibe-button" onclick="generateVibe()">Random Vibe</button>
-    <button class="vibe-button" onclick="saveVibe()">Save This Vibe</button>
-    <button class="vibe-button" onclick="showForm()">Create Vibe</button>
+    <button class="vibe-button" onclick="generateVibe()">Random <em>Vibe</em></button>
+    <button class="vibe-button" onclick="showForm()">Create A <em>Vibe</em></button>
   </div>
 
   <script>
     const vibeData = {
-      vibes: ["Good vibes only", "Feeling cosmic!", "Positive energy", "The universe is on your side"],
-      palettes: ["#ff5733", "#33ff57", "#5733ff", "#ff33a5"],
-      songs: ["Space Oddity", "Starman", "Fly Me to the Moon", "Intergalactic"],
-      objects: ["A glowing orb", "A comet", "A shooting star", "A purple nebula"],
-      affirmations: ["You are a star", "The universe supports you", "Good things are coming"]
+      vibes: [],
+      palettes: [],
+      songs: [],
+      objects: [],
+      affirmations: []
     };
 
     let currentHTML = "";
@@ -145,11 +138,16 @@
     }
 
     function generateVibe() {
+      if (Object.values(vibeData).some(arr => arr.length === 0)) {
+        console.error("Data not fully loaded yet!");
+        return;
+      }
+
       const vibeHTML = `
-        <p><strong>🌌 Vibe:</strong> <span class="vibe-italics">${randomFrom(vibeData.vibes)}</span></p>
+        <p><strong>🌌 Vibe:</strong> ${randomFrom(vibeData.vibes)}</p>
         <p><strong>🎨 Colors:</strong> ${randomFrom(vibeData.palettes)}</p>
         <p><strong>🎵 Song:</strong> ${randomFrom(vibeData.songs)}</p>
-        <p><strong>🧿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
+        <p><strong>🭿 Thing:</strong> ${randomFrom(vibeData.objects)}</p>
         <p><strong>✨ Note:</strong> ${randomFrom(vibeData.affirmations)}</p>
       `;
 
@@ -167,23 +165,19 @@
       });
     }
 
-    function saveVibe() {
-      html2canvas(outputBox).then(function(canvas) {
-        // Convert canvas to data URL (image)
-        const image = canvas.toDataURL("image/png");
-
-        // Create a link to download the image
-        const link = document.createElement('a');
-        link.href = image;
-        link.download = 'cosmic-vibe.png';
-        link.click();
-      }).catch(function(error) {
-        console.error("Error capturing screenshot: ", error);
-      });
-    }
-
-    // Automatically load the first vibe
-    generateVibe();
+    // Load each data file separately
+    Promise.all([
+      fetch('vibes.json').then(res => res.json()).then(data => vibeData.vibes = data),
+      fetch('palettes.json').then(res => res.json()).then(data => vibeData.palettes = data),
+      fetch('songs.json').then(res => res.json()).then(data => vibeData.songs = data),
+      fetch('objects.json').then(res => res.json()).then(data => vibeData.objects = data),
+      fetch('affirmations.json').then(res => res.json()).then(data => vibeData.affirmations = data)
+    ])
+    .then(() => {
+      console.log("All data loaded!");
+      generateVibe();
+    })
+    .catch(error => console.error('Error loading one of the files:', error));
   </script>
 
 </body>
