@@ -1,83 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Cosmic Vibe Overloader</title>
   <style>
     body {
-      background-color: #000;
+      background-color: black;
       color: #0ff;
       font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2em;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
     }
 
-    button {
-      background-color: #ff00ff;
-      border: none;
-      color: white;
-      padding: 1em 2em;
-      font-size: 1.5em;
-      cursor: pointer;
-      margin-bottom: 2em;
+    #output {
+      margin: 30px auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #0ff;
       border-radius: 10px;
-      box-shadow: 0 0 10px #ff00ff;
+      max-width: 600px;
     }
 
-    .vibe-output {
-      background-color: rgba(255, 255, 255, 0.05);
-      border-left: 5px solid #0ff;
-      padding: 1em;
-      margin-bottom: 1em;
-      width: 80%;
-      max-width: 600px;
+    #newVibeButton {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #0ff;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    #newVibeButton:hover {
+      background-color: #0cc;
     }
   </style>
 </head>
 <body>
-  <button onclick="generateVibe()">Overload Me</button>
+
   <div id="output"></div>
+
+  <button id="newVibeButton" onclick="generateVibe()">New Vibe</button>
 
   <script>
     const vibes = [
-      "You are the last banana on a space station",
-      "Time is melting but only for ducks",
-      "Reality is on shuffle",
+      "you are the last banana on a space station",
+      "gravity is just shy today",
+      "you woke up made of crystal",
+      "time is folding itself into origami swans"
     ];
 
     const palettes = [
-      "Goblin Green, Corpse Pink, Blurple",
-      "Ethereal Mauve, Static Blue, Dream Dust",
-      "Nuclear Peach, Deep Void Cyan",
+      "goblin green and ethereal mauve",
+      "sun-bleached cyan and bruised gold",
+      "void black and shimmer pink"
     ];
 
     const songs = [
-      "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // rickroll for fun
-      "The Whispering Ferns – 'Echoes from the Moss Core'",
-      "Static Highway – 'Neon Mirage'",
+      "Dreaming of Satellites - The Mistones",
+      "Hollow Anthems - Neon Drift",
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  // Fun easter egg!
     ];
 
     const objects = [
-      "Cracked monocle of insight",
-      "Unlabeled vial of reverse gravity",
-      "Infinite index card",
+      "cracked monocle of insight",
+      "rusty key to nowhere",
+      "eternal hourglass leaking stardust"
     ];
 
     const affirmations = [
-      "Even voidfish need naps",
-      "You are stardust with agency",
-      "You glitch beautifully",
+      "even voidfish need naps",
+      "your echoes write symphonies",
+      "the stars already forgave you"
     ];
 
-    function randomFrom(array) {
-      return array[Math.floor(Math.random() * array.length)];
+    function randomFrom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
     }
 
     function generateVibe() {
-      const vibe = `
+      const vibeHTML = `
         <div class="vibe-output">
           <p><strong>🌌 Daily Vibe:</strong> ${randomFrom(vibes)}</p>
           <p><strong>🎨 Color Palette:</strong> ${randomFrom(palettes)}</p>
@@ -86,8 +90,17 @@
           <p><strong>✨ Affirmation:</strong> ${randomFrom(affirmations)}</p>
         </div>
       `;
-      document.getElementById("output").innerHTML += vibe;
+      
+      // Clear previous vibe
+      document.getElementById("output").innerHTML = "";
+
+      // Insert new vibe
+      document.getElementById("output").innerHTML = vibeHTML;
     }
+
+    // Create the first vibe immediately when page loads
+    generateVibe();
   </script>
+
 </body>
 </html>
